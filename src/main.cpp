@@ -10,7 +10,7 @@
  *
  * How It Works:
  *   1. Sensor Reading: The code reads temperature and humidity data from the DHT11 sensor as float vaues
- *    at regular 1 second intervals.
+ *    at regular 2 second intervals.
  *   2. Display: The sensor data is updated on the screen only when there is a difference in readings.
  *   3. State Machine: A state machine is used to manage the timing of sensor readings and display updates.
  *   4. Sensor Check: If the sensor readings are 0 or invalid, it displays "Sensor Not Connected".
@@ -66,7 +66,7 @@ enum class State {
 // Global variables
 State currentState = State::READ_SENSOR;       // initial state
 unsigned long previousMillis = 0;              // for non-blocking timing
-const unsigned long sensorReadInterval = 1000; // read sensor every 1 second
+const unsigned long sensorReadInterval = 2000; // read sensor every 2 seconds (recommended interval)
 float temperature = 0.0;                       // variable to store temperature reading
 float humidity = 0.0;                          // variable to store humidity reading
 float previousTemperature = 0.0;               // store previous temperature value
@@ -93,10 +93,10 @@ void displaySensorData() {
       tft.println("---------------------------");
 
       tft.println("\nTemperature:");
-      tft.println(String(temperature) + " C");
+      tft.println(String(temperature) + " C"); // convert float value to string
 
       tft.println("\nHumidity:");
-      tft.println(String(humidity) + " %");
+      tft.println(String(humidity) + " %");    // convert float value to string
     }
     else {
       // Display "Sensor Not Connected" message
