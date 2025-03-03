@@ -31,13 +31,13 @@
  *   - DHT11 uses float as the data-type, rounded to the 2nd decimal poition (00.00)
  * 
  * DHT11 Specifications:
-     - Operating Voltage: 3.5V to 5.5V
-     - Operating current: 0.3mA (measuring) 60uA (standby)
-     - Output: Serial data
-     - Temperature Range: 0°C to 50°C
-     - Humidity Range: 20% to 90%
-     - Resolution: Temperature and Humidity both are 16-bit
-     - Accuracy: ±1°C and ±1%
+ *   - Operating Voltage: 3.5V to 5.5V
+ *   - Operating current: 0.3mA (measuring) 60uA (standby)
+ *   - Output: Serial data
+ *   - Temperature Range: 0°C to 50°C
+ *   - Humidity Range: 20% to 90%
+ *   - Resolution: Temperature and Humidity both are 16-bit
+ *   - Accuracy: ±1°C and ±1%
 **********************************************************************************************************/
 
 
