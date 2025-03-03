@@ -12,7 +12,7 @@
 
  How It Works:
    1. Sensor Reading: The code reads temperature and humidity data from the DHT11 sensor as float vaues
-    at regular 1 second intervals.
+    at regular 2 second intervals.
    2. Display: The sensor data is updated on the screen only when there is a difference in readings.
    3. State Machine: A state machine is used to manage the timing of sensor readings and display updates.
    4. Sensor Check: If the sensor readings are 0 or invalid, it displays "Sensor Not Connected".
