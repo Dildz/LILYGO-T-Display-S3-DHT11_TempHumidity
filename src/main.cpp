@@ -16,7 +16,7 @@
  *   4. Sensor Check: If the sensor readings are 0 or invalid, it displays "Sensor Not Connected".
  *
  * Pin Connections:
- *   - DHT11 Data Pin -> GPIO2 
+ *   - DHT11 Data Pin -> GPIO1
  *   - LCD Backlight  -> GPIO15
  *   - Ground         -> GND
  *   - Voltage        -> 5V
@@ -26,12 +26,12 @@
  *   - The TFT_eSPI library is configured to work with the LilyGO T-Display-S3, providing an easy way to
  *      display information on the built-in screen.
  *   - DHT11 pinout: [-] = GND | [S] = Signal PIN | [MIDDLE PIN] = Supply Voltage PIN.
- *      (5V or 3.5V pins on the T-Display can be used to power the DHT11 but the resolution will be lower
- *       if the 3.5V pin is used.)
+ *      (5V or 3.3V pins on the T-Display can be used to power the DHT11 but the resolution will be lower
+ *       if the 3.3V pin is used.)
  *   - DHT11 uses float as the data-type, rounded to the 2nd decimal poition (00.00)
  * 
  * DHT11 Specifications:
- *   - Operating Voltage: 3.5V to 5.5V
+ *   - Operating Voltage: 3V to 5V
  *   - Operating current: 0.3mA (measuring) 60uA (standby)
  *   - Output: Serial data
  *   - Temperature Range: 0°C to 50°C
@@ -79,34 +79,54 @@ bool sensorConnected = true;                   // flag to track sensor connectio
 ********************** HELPER FUNCTIONS **********************
 **************************************************************/
 
-// Function to display sensor data on the TFT screen
-void displaySensorData() {
-  if (redrawRequired) {
-    tft.fillScreen(TFT_BLACK);
-    tft.setCursor(0, 0);
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
+// Function to draw static elements on the TFT screen
+void drawStaticElements() {
+  tft.fillScreen(TFT_BLACK);              // clear the screen
+  tft.setTextFont(2);                     // set the font
+  tft.setTextColor(TFT_WHITE, TFT_BLACK); // set text color and background
 
-    if (sensorConnected) {
-      // Display temperature and humidity readings
-      tft.println("---------------------------");
-      tft.println("- DHT11 Sensor Module -");
-      tft.println("---------------------------");
+  // Draw static text or elements
+  tft.setCursor(0, 0);
+  tft.println("---------------------------");
+  tft.println("- DHT11 Sensor Module -");
+  tft.println("---------------------------");
 
-      tft.println("\nTemperature:");
-      tft.println(String(temperature) + " C"); // convert float value to string
+  tft.setCursor(0, 70);
+  tft.println("Status:");
 
-      tft.println("\nHumidity:");
-      tft.println(String(humidity) + " %");    // convert float value to string
-    }
-    else {
-      // Display "Sensor Not Connected" message
-      tft.println("---------------------------");
-      tft.println("- DHT11 Sensor Module -");
-      tft.println("---------------------------");
-      tft.println("\n!! Sensor Not Connected !!");
-    }
+  tft.setCursor(0, 120);
+  tft.println("Temperature:");
 
-    redrawRequired = false;
+  tft.setCursor(0, 170);
+  tft.println("Humidity:");
+}
+
+// Function to update dynamic elements on the TFT screen
+void updateDynamicElements() {
+  // Update sensor status
+  tft.setCursor(0, 90);  // move cursor to the line below "Status:"
+  tft.print("        "); // clear previous value
+  tft.setCursor(0, 90);
+  tft.print(sensorConnected ? "CONNECTED" : "DISCONNECTED");
+
+  // Update temperature
+  tft.setCursor(0, 140); // move cursor to the line below "Temperature:"
+  tft.print("        "); // clear previous value
+  tft.setCursor(0, 140);
+  if (sensorConnected) {
+    tft.print(String(temperature) + " C");
+  } else {
+    tft.print("N/A");
+  }
+
+  // Update humidity
+  tft.setCursor(0, 190); // move cursor to the line below "Humidity:"
+  tft.print("        "); // clear previous value
+  tft.setCursor(0, 190);
+  if (sensorConnected) {
+    tft.print(String(humidity) + " %");
+  } else {
+    tft.print("N/A");
   }
 }
 
@@ -126,6 +146,9 @@ void setup() {
 
   // Initialize the DHT11 sensor
   dht11.begin();
+
+  // Draw static elements once
+  drawStaticElements();
 
   // Initial display update
   redrawRequired = true; // update display
@@ -163,7 +186,10 @@ void loop() {
 
     case State::UPDATE_DISPLAY:
       // Update the display with the new sensor data
-      displaySensorData();
+      if (redrawRequired) {
+        updateDynamicElements();
+        redrawRequired = false; // reset the flag
+      }
 
       // Move to the WAIT state
       currentState = State::WAIT;
